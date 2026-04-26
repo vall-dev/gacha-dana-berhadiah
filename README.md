@@ -49,5 +49,8 @@ Logika kemenangan diatur pada fungsi `mulaiSpin()` di dalam file `Index.html`. S
 Proyek ini dibuat untuk tujuan edukasi dan penggunaan pribadi selama masa Lebaran. Segala bentuk penyalahgunaan di luar tanggung jawab pengembang.
 
 ## DEMO
+---
+LINK : <a href="https://script.google.com/macros/s/AKfycbzbIpXXunqu6A5tREC_0d5uT4yVZ33w9QUTkf5yZbJNvFfhEnx-nReuuziclYVYWGQ8/exec">DEMO</a>
+---
 <img src="demo/image.png"></img>
 <img src="demo/image1.png"></img>
