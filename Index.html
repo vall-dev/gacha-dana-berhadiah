@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #0d0d0d; color: #ffffff; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background-color: #141414; width: 100%; max-width: 400px; padding: 25px; border: 1px solid #222; text-align: center; }
+        
+        .header { margin-bottom: 20px; }
+        .header i { font-size: 2rem; color: #ff3e3e; margin-bottom: 8px; }
+        h1 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: #eee; }
+
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; outline: none; border-radius: 4px; font-size: 14px; }
+        input:focus { border-color: #ff3e3e; }
+
+        .wheel-box { position: relative; width: 300px; height: 300px; margin: 20px auto; }
+        #wheel-svg { width: 100%; height: 100%; transform: rotate(-90deg); transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 25px solid #ff3e3e; z-index: 10; }
+        
+        .prize-text { fill: #fff; font-size: 5px; font-weight: bold; text-anchor: middle; }
+
+        .btn-spin { width: 100%; padding: 15px; background: #ff3e3e; border: none; color: white; font-weight: bold; font-size: 14px; text-transform: uppercase; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-spin:disabled { background: #333; color: #555; cursor: not-allowed; }
+        
+        #result-msg { margin-top: 20px; font-weight: bold; font-size: 14px; color: #ff3e3e; min-height: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <i class="fa-solid fa-gift"></i>
+            <h1>THR DIGITAL 2026</h1>
+        </div>
+
+        <div class="form-group">
+            <label>Recipient Name</label>
+            <input type="text" id="name" placeholder="Nama Lengkap">
+        </div>
+        <div class="form-group">
+            <label>DANA Number</label>
+            <input type="number" id="dana" placeholder="08xxxxxxxxxx">
+        </div>
+
+        <div class="wheel-box">
+            <div class="pointer"></div>
+            <svg id="wheel-svg" viewBox="0 0 100 100"></svg>
+        </div>
+
+        <button class="btn-spin" id="spinBtn" onclick="mulaiSpin()">
+            <i class="fa-solid fa-rotate"></i> SPIN NOW
+        </button>
+
+        <div id="result-msg"></div>
+    </div>
+
+    <script>
+        const svg = document.getElementById('wheel-svg');
+        const prizes = [
+            "Rp 500.000", "Rp 1.000", "Rp 1.000", "Rp 1.000", "Rp 1.000", 
+            "Rp 1.000", "Rp 1.000", "Rp 1.000", "Rp 1.000", "Rp 1.000"
+        ];
+        const colors = ["#ff3e3e", "#222", "#2a2a2a", "#222", "#2a2a2a", "#222", "#2a2a2a", "#222", "#2a2a2a", "#222"];
+        const numSegments = prizes.length;
+        const anglePerSegment = 360 / numSegments;
+
+        function drawWheel() {
+            for (let i = 0; i < numSegments; i++) {
+                const startAngle = i * anglePerSegment;
+                const endAngle = (i + 1) * anglePerSegment;
+                
+                const x1 = 50 + 50 * Math.cos(Math.PI * startAngle / 180);
+                const y1 = 50 + 50 * Math.sin(Math.PI * startAngle / 180);
+                const x2 = 50 + 50 * Math.cos(Math.PI * endAngle / 180);
+                const y2 = 50 + 50 * Math.sin(Math.PI * endAngle / 180);
+
+                const pathData = `M 50 50 L ${x1} ${y1} A 50 50 0 0 1 ${x2} ${y2} Z`;
+                
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", pathData);
+                path.setAttribute("fill", colors[i]);
+                path.setAttribute("stroke", "#141414");
+                path.setAttribute("stroke-width", "0.5");
+                svg.appendChild(path);
+
+                const textAngle = startAngle + anglePerSegment / 2;
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                const trX = 50 + 35 * Math.cos(Math.PI * textAngle / 180);
+                const trY = 50 + 35 * Math.sin(Math.PI * textAngle / 180);
+                
+                text.setAttribute("x", trX);
+                text.setAttribute("y", trY);
+                text.setAttribute("class", "prize-text");
+                text.setAttribute("transform", `rotate(${textAngle}, ${trX}, ${trY})`);
+                text.textContent = prizes[i];
+                svg.appendChild(text);
+            }
+        }
+
+        drawWheel();
+
+        let currentRotation = 0;
+
+        function mulaiSpin() {
+            const name = document.getElementById('name').value;
+            const dana = document.getElementById('dana').value;
+            const btn = document.getElementById('spinBtn');
+            const msg = document.getElementById('result-msg');
+
+            if (!name || !dana) {
+                alert("Isi nama dan nomor DANA dulu!");
+                return;
+            }
+
+            btn.disabled = true;
+            msg.innerText = "Memutar keberuntungan...";
+
+            const winChance = Math.random() * 100;
+            let targetIndex;
+            let finalPrize;
+
+            if (winChance <= 10) {
+                targetIndex = 0; 
+                finalPrize = "Rp 500.000";
+            } else {
+                targetIndex = Math.floor(Math.random() * 9) + 1;
+                finalPrize = "Rp 1.000";
+            }
+
+            const extraSpins = (Math.floor(Math.random() * 5) + 10) * 360;
+            const stopAngle = extraSpins + (360 - (targetIndex * anglePerSegment)) - (anglePerSegment / 2);
+            
+            currentRotation += stopAngle;
+            svg.style.transform = `rotate(${currentRotation - 90}deg)`;
+
+            setTimeout(() => {
+                msg.innerText = "Selamat " + name + "! Kamu dapat " + finalPrize;
+                google.script.run.withSuccessHandler(() => {
+                    btn.disabled = false;
+                    alert("Data Berhasil Masuk Spreadsheet!");
+                }).simpanData(name, dana, finalPrize);
+            }, 5200);
+        }
+    </script>
+</body>
+</html>
