@@ -47,3 +47,7 @@ Logika kemenangan diatur pada fungsi `mulaiSpin()` di dalam file `Index.html`. S
 ## Lisensi
 
 Proyek ini dibuat untuk tujuan edukasi dan penggunaan pribadi selama masa Lebaran. Segala bentuk penyalahgunaan di luar tanggung jawab pengembang.
+
+## DEMO
+<img src="image.png"></img>
+<img src="image1.png"></img>
